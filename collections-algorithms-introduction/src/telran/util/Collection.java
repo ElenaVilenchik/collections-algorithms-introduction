@@ -1,5 +1,6 @@
 package telran.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
@@ -11,7 +12,7 @@ public interface Collection<T> extends Iterable<T> {
 	 * @return true if add
 	 */
 	boolean add(T obj);
-	
+
 	/***************************************/
 	/**
 	 * removes object equaled to the given pattern
@@ -53,17 +54,21 @@ public interface Collection<T> extends Iterable<T> {
 	 * @return regular Java array containing all the collection object
 	 */
 	default T[] toArray(T[] ar) {
-		// TODO 
-		//write the default method implementation based on the iterating
-		
 		Iterator<T> it = iterator();
-		// TODO fill array by iterating
-		// if array.length<size then you should create new array of type T with proper
-		// length (consider method Arrays.
-		// if ar.length == size then you jast fill given array and reference to the same
-		// array
-		// if ar.length>size then you fill the given array and rest part should be
-		// filled by null's and reference to the same array will be returned
-		return null;
+		int size = size();
+		if (ar.length < size) {
+			ar = Arrays.copyOf(ar, size);
+		} else {
+			if (ar.length > size) {
+				for (int i = size; i < ar.length; i++) {
+					ar[i] = null;
+				}
+			}
+			int index = 0;
+			while (it.hasNext()) {
+				ar[index++] = it.next();
+			}
+		}
+		return ar;
 	}
 }

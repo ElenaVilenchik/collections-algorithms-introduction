@@ -41,5 +41,13 @@ public interface List<T> extends Collection<T> {
 	 * @return the number at the given index for index [0, size - 1] or null for
 	 *         wrong index value
 	 */
-	Integer get(int index);
+	T get(int index);
+
+	default boolean contains(Object pattern) {
+		return indexOf(pattern) >= 0;
+	}
+
+	default boolean checkExistingIndex(int index) {
+		return index >= 0 && index < size();
+	}
 }
