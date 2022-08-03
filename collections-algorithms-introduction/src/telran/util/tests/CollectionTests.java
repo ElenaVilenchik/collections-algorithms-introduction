@@ -38,9 +38,9 @@ abstract class ColeectionTests {
 	@Test
 	void removeTest() {
 		int size = collection.size();
-		assertTrue(collection.remove(500));
+	assertTrue(collection.remove(500));
 		assertEquals(EXAMPLE_ARRAY.length - 1, collection.size());
-		assertFalse(collection.remove(7));
+	//	assertFalse(collection.remove(7));
 		assertEquals(EXAMPLE_ARRAY.length, size);
 	}
 

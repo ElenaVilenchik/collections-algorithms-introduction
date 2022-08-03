@@ -53,12 +53,11 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public boolean remove(Object pattern) {
 		int index = indexOf(pattern);
-		boolean isRemove = false;
 		if (index >= 0) {
 			removeByIndex(index);
-			isRemove = true;
+			return true;
 		}
-		return isRemove;
+		return false;
 	}
 
 	private void removeByIndex(int index) {

@@ -17,7 +17,7 @@ abstract class ListTests extends ColeectionTests {
 		list = (List<Integer>) collection;
 	}
 
-	@Test
+	@Test // { 0, 11, 2, -3, 4, 500 }
 	void addIndexTest() {
 
 		assertTrue(list.add(0, -8));
@@ -34,7 +34,7 @@ abstract class ListTests extends ColeectionTests {
 		assertEquals(size + 1, list.size());
 	}
 
-	@Test
+	@Test // { 0, 11, 2, -3, 4, 500 }
 	void removeIndexTest() {
 		int size = list.size();
 		assertEquals(0, list.remove(0));
@@ -56,7 +56,7 @@ abstract class ListTests extends ColeectionTests {
 		assertEquals(1, list.indexOf(11));
 	}
 
-	@Test
+	@Test // { 0, 11, 2, -3, 4, 500 }
 	void lastIndexOfTest() {
 		list.add(30);
 		assertEquals(6, list.lastIndexOf(30));
