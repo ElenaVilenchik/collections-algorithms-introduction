@@ -29,7 +29,17 @@ public interface Collection<T> extends Iterable<T> {
 	 * @param predicate
 	 * @return true if a collection has been updated
 	 */
-	boolean removeIf(Predicate<T> predicate);
+	default boolean removeIf(Predicate<T> predicate) {
+		int sizeOld = size();
+		Iterator<T> it = iterator();
+		while (it.hasNext()) {
+			T obj = it.next();
+			if (predicate.test(obj)) {
+				it.remove();
+			}
+		}
+		return sizeOld > size();
+	}
 
 	/***************************************/
 	/**
@@ -58,16 +68,14 @@ public interface Collection<T> extends Iterable<T> {
 		int size = size();
 		if (ar.length < size) {
 			ar = Arrays.copyOf(ar, size);
-		} else {
-			if (ar.length > size) {
-				for (int i = size; i < ar.length; i++) {
-					ar[i] = null;
-				}
+		} else if (ar.length > size) {
+			for (int i = size; i < ar.length; i++) {
+				ar[i] = null;
 			}
-			int index = 0;
-			while (it.hasNext()) {
-				ar[index++] = it.next();
-			}
+		}
+		int index = 0;
+		while (it.hasNext()) {
+			ar[index++] = it.next();
 		}
 		return ar;
 	}

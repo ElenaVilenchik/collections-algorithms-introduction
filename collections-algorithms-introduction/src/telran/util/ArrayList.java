@@ -2,7 +2,6 @@ package telran.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class ArrayList<T> implements List<T> {
@@ -21,19 +20,27 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	private class ArrayListIterator implements Iterator<T> {
-		private int current = 0;
+		private int currentInd = 0;
+		boolean flNext = false;
 
 		@Override
 		public boolean hasNext() {
-			return current < size;
+			return currentInd < size;
 		}
 
 		@Override
 		public T next() {
-			if (!hasNext()) {
-				throw new NoSuchElementException();
+			flNext = true;
+			return array[currentInd++];
+		}
+
+		@Override
+		public void remove() {
+			if (!flNext) {
+				throw new IllegalStateException();
 			}
-			return array[current++];
+			ArrayList.this.remove(--currentInd);
+			flNext = false;
 		}
 	}
 
@@ -63,20 +70,8 @@ public class ArrayList<T> implements List<T> {
 	private void removeByIndex(int index) {
 		size--;
 		System.arraycopy(array, index + 1, array, index, size - index);
-	}
-
-	@Override
-	public boolean removeIf(Predicate<T> predicate) {
-		int sizeNew = size;
-		int index = 0;
-		while (index < size) {
-			if (predicate.test(array[index])) {
-				removeByIndex(index);
-			} else {
-				index++;
-			}
-		}
-		return size > sizeNew;
+		// array[size]==array[size-1] => Memory leak
+		array[size] = null; // solution for preventing memory leak
 	}
 
 	@Override
@@ -135,5 +130,33 @@ public class ArrayList<T> implements List<T> {
 	@Override
 	public T get(int index) {
 		return checkExistingIndex(index) ? array[index] : null;
+	}
+
+	@Override
+	public boolean removeIf(Predicate<T> predicate) {
+		boolean res = false;
+		int indDestination = 0;
+		int sizeAfterDeletion = size;
+		for (int indSource = 0; indSource < size; indSource++) {
+			if (predicate.test(array[indSource])) {
+				sizeAfterDeletion--;
+			} else {
+				array[indDestination++] = array[indSource];
+			}
+		}
+		res = afterDeletionProcessing(sizeAfterDeletion);
+		return res;
+	}
+
+	private boolean afterDeletionProcessing(int sizeAfterDeletion) {
+		boolean res = false;
+		if (sizeAfterDeletion < size) {
+			res = true;
+			for (int i = sizeAfterDeletion; i < size; i++) {
+				array[i] = null;
+			}
+			size = sizeAfterDeletion;
+		}
+		return res;
 	}
 }
