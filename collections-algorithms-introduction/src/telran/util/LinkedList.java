@@ -224,18 +224,32 @@ public class LinkedList<T> implements List<T> {
 	/**
 	 * performs reversing of the objects order current - {10, -5, 30) -> after
 	 * reverse {30, -5, 10}
+	 * @return 
 	 * 
 	 * @return
 	 */
-
-	public void reverse() {
-		int limit = size / 2;
-		Node<T> forwardCurrent = head;
-		Node<T> backwardCurrent = tail;
-		for (int i = 0; i < limit; i++, forwardCurrent = forwardCurrent.next, backwardCurrent = backwardCurrent.prev) {
-			T tmp = forwardCurrent.obj;
-			forwardCurrent.obj = backwardCurrent.obj;
-			backwardCurrent.obj = tmp;
+//	public void reverse() {
+//		int limit = size / 2;
+//		Node<T> forwardCurrent = head;
+//		Node<T> backwardCurrent = tail;
+//		for (int i = 0; i < limit; i++, forwardCurrent = forwardCurrent.next, backwardCurrent = backwardCurrent.prev) {
+//			T tmp = forwardCurrent.obj;
+//			forwardCurrent.obj = backwardCurrent.obj;
+//			backwardCurrent.obj = tmp;
+//		}
+//	}
+	
+	
+	public Object reverse(Node<T> node) {
+		if (node == null) {
+			return null;
 		}
+		Node<T> tmp = node.next;
+		node.next = node.prev;
+		node.prev = tmp;
+		if (node.prev == null) {
+			return node;
+		}
+		return reverse(node.prev);
 	}
 }
