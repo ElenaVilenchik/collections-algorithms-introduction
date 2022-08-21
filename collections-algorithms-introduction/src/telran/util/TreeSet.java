@@ -241,33 +241,6 @@ public class TreeSet<T> implements SortedSet<T> {
 	}
 
 	/**
-	 * rotated tree
-	 */
-	public void displayRotated() {
-		displayRotated(root, 0, "",true);
-	}
-
-	private void displayRotated(Node<T> root, int level, String rib, boolean itRight) {
-		if (root != null) {
-			displayRotated(root.right, level + 1, rib_Right, true);
-			displayRootWithRibs(root, level, rib, itRight);
-			displayRotated(root.left, level + 1, rib_Left, false);
-		}
-	}
-
-	private void displayRootWithRibs(Node<T> root, int level, String rib, boolean itRight) {
-		if (itRight) {
-			System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), root.obj);		
-			System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), rib);
-		
-		} else {
-			System.out.printf("%s%s\n", FILL_SYMBOL.repeat((level) * N_SYMBOLS_PER_LEVEL), rib);
-			System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), root.obj);
-	
-		}
-	}
-
-	/**
 	 * Height and width tree
 	 */
 	public int height() {
@@ -299,6 +272,39 @@ public class TreeSet<T> implements SortedSet<T> {
 	}
 
 	/**
+	 * rotated tree
+	 */
+	public void displayRotated() {
+		displayRotated(root, 0, "", true);
+	}
+
+	private void displayRotated(Node<T> root, int level, String rib, boolean itRight) {
+		if (root != null) {
+			displayRotated(root.right, level + 1, rib_Right, true);
+			displayTree(root, level, rib, itRight);
+			displayRotated(root.left, level + 1, rib_Left, false);
+		}
+	}
+
+	private void displayRoot(Node<T> root, int level) {
+		System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), root.obj);
+	}
+
+	private void displayRib(int level, String rib) {
+		System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), rib);
+	}
+
+	private void displayTree(Node<T> root, int level, String rib, boolean itRight) {
+		if (itRight) {
+			displayRoot(root, level);
+			displayRib(level, rib);
+		} else {
+			displayRib(level, rib);
+			displayRoot(root, level);
+		}
+	}
+
+	/**
 	 * tree as directory
 	 */
 	public void displayAsDirectory() {
@@ -311,10 +317,6 @@ public class TreeSet<T> implements SortedSet<T> {
 			displayAsDirectory(root.left, level + 1);
 			displayAsDirectory(root.right, level + 1);
 		}
-	}
-
-	private void displayRoot(Node<T> root, int level) {
-		System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), root.obj);
 	}
 
 	/**
