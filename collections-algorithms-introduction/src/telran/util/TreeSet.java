@@ -275,14 +275,15 @@ public class TreeSet<T> implements SortedSet<T> {
 	 * rotated tree
 	 */
 	public void displayRotated() {
-		displayRotated(root, 0, "", true);
+		boolean itRight = true;
+		displayRotated(root, 0, "", itRight);
 	}
 
 	private void displayRotated(Node<T> root, int level, String rib, boolean itRight) {
 		if (root != null) {
-			displayRotated(root.right, level + 1, rib_Right, true);
+			displayRotated(root.right, level + 1, rib_Right, itRight);
 			displayTree(root, level, rib, itRight);
-			displayRotated(root.left, level + 1, rib_Left, false);
+			displayRotated(root.left, level + 1, rib_Left, !itRight);
 		}
 	}
 
