@@ -6,10 +6,10 @@ import java.util.function.Predicate;
 
 public interface Collection<T> extends Iterable<T> {
 	/**
-	 * add object of type T in collection
+	 * adds object of type T in collection
 	 * 
 	 * @param obj
-	 * @return true if add
+	 * @return true if added
 	 */
 	boolean add(T obj);
 
@@ -22,9 +22,9 @@ public interface Collection<T> extends Iterable<T> {
 	 */
 	boolean remove(Object pattern);
 
-	/***************************************/
+	/******************************************/
 	/**
-	 * removes all object matching the given predicate
+	 * removes all objects matching the given predicate
 	 * 
 	 * @param predicate
 	 * @return true if a collection has been updated
@@ -41,7 +41,7 @@ public interface Collection<T> extends Iterable<T> {
 		return sizeOld > size();
 	}
 
-	/***************************************/
+	/*************************************************/
 	/**
 	 * 
 	 * @param predicate
@@ -49,21 +49,22 @@ public interface Collection<T> extends Iterable<T> {
 	 */
 	boolean contains(Object pattern);
 
-	/***************************************/
+	/********************************************************/
 	/**
 	 * 
-	 * @return amount of the object
+	 * @return amount of the objects
 	 */
 	int size();
 
-	/***************************************/
+	/******************************************************/
 	/**
-	 * 
 	 * 
 	 * @param ar
 	 * @return regular Java array containing all the collection object
 	 */
 	default T[] toArray(T[] ar) {
+
+		// write the default method implementation based on the iterating
 		Iterator<T> it = iterator();
 		int size = size();
 		if (ar.length < size) {
@@ -73,10 +74,17 @@ public interface Collection<T> extends Iterable<T> {
 				ar[i] = null;
 			}
 		}
-		int index = 0;
+		int ind = 0;
 		while (it.hasNext()) {
-			ar[index++] = it.next();
+			ar[ind++] = it.next();
 		}
+		// if ar.length < size then you should create new array of type T with proper
+		// length(consider method Arrays.copyOf)
+		// if ar.length == size then you just fill the given array and reference to the
+		// same array will be returned
+		// if ar'length > size then you fill the given array and rest part should be
+		// filled by null's and
+		// reference to the same array will be returned
 		return ar;
 	}
 }

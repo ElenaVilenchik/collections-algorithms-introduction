@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class TreeSet<T> implements SortedSet<T> {
+public class TreeSet<T> extends AbstractCollection<T> implements SortedSet<T> {
 	private static class Node<T> {
 		T obj;
 		Node<T> parent;
@@ -16,13 +16,13 @@ public class TreeSet<T> implements SortedSet<T> {
 		}
 	}
 
-	private static final int N_SYMBOLS_PER_LEVEL = 3;
-	private static final String FILL_SYMBOL = "  ";
-	private static final String rib_Left = "\\";
-	private static final String rib_Right = "/";
+	private static final int N_SYMBOLS_PER_LEVEL = 2;
+	private static final String FILL_SYMBOL = " ";
+	private static final String RIB_LEFT = "\\";
+	private static final String RIB_RIGHT = "/";
+	private static final String PLUS = "+";
 
 	private Node<T> root;
-	int size;
 	Comparator<T> comp;
 
 	private Node<T> getLeastNodeFrom(Node<T> node) {
@@ -208,11 +208,6 @@ public class TreeSet<T> implements SortedSet<T> {
 	}
 
 	@Override
-	public int size() {
-		return size;
-	}
-
-	@Override
 	public Iterator<T> iterator() {
 		return new TreeSetIterator();
 	}
@@ -278,30 +273,26 @@ public class TreeSet<T> implements SortedSet<T> {
 		boolean itRight = true;
 		displayRotated(root, 0, "", itRight);
 	}
-
-	private void displayRotated(Node<T> root, int level, String rib, boolean itRight) {
-		if (root != null) {
-			displayRotated(root.right, level + 1, rib_Right, itRight);
-			displayTree(root, level, rib, itRight);
-			displayRotated(root.left, level + 1, rib_Left, !itRight);
+	private void displayRotated(Node<T> node, int level, String rib, boolean itRight) {
+		if (node != null) {
+			displayRotated(node.right, level + 1, RIB_RIGHT, itRight);
+			displayTree(node, level, rib, itRight);
+			displayRotated(node.left, level + 1, RIB_LEFT, !itRight);
 		}
 	}
-
-	private void displayRoot(Node<T> root, int level) {
-		System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), root.obj);
+	private void displayRoot(Node<T> node, int level) {
+		System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), node.obj);
 	}
-
 	private void displayRib(int level, String rib) {
 		System.out.printf("%s%s\n", FILL_SYMBOL.repeat(level * N_SYMBOLS_PER_LEVEL), rib);
 	}
-
-	private void displayTree(Node<T> root, int level, String rib, boolean itRight) {
+	private void displayTree(Node<T> node, int level, String rib, boolean itRight) {
 		if (itRight) {
-			displayRoot(root, level);
+			displayRoot(node, level);
 			displayRib(level, rib);
 		} else {
 			displayRib(level, rib);
-			displayRoot(root, level);
+			displayRoot(node, level);
 		}
 	}
 
@@ -311,12 +302,11 @@ public class TreeSet<T> implements SortedSet<T> {
 	public void displayAsDirectory() {
 		displayAsDirectory(root, 0);
 	}
-
-	private void displayAsDirectory(Node<T> root, int level) {
-		if (root != null) {
-			displayRoot(root, level);
-			displayAsDirectory(root.left, level + 1);
-			displayAsDirectory(root.right, level + 1);
+	private void displayAsDirectory(Node<T> node, int level) {
+		if (node != null) {
+			displayRoot(node, level);
+			displayAsDirectory(node.left, level + 1);
+			displayAsDirectory(node.right, level + 1);
 		}
 	}
 
@@ -324,25 +314,187 @@ public class TreeSet<T> implements SortedSet<T> {
 	 * tree inversion - swap of left and right subtrees
 	 */
 	public void inversion() {
+		inversion(root);
+		comp = comp.reversed();
+	}
+	private void inversion(Node<T> node) {
+		if (node != null) {
+			swap(node);
+			inversion(node.left);
+			inversion(node.right);
+		}
+	}
+	private void swap(Node<T> node) {
+			Node<T> tmp = node.left;
+			node.left = node.right;
+			node.right = tmp;
+	}
+	
+	public void balance() {
+
+		//Create sorted Node<T>[];
+		//balance creates new root for each part [left, right] of Node<T>[]
+		//root.left = balance call from left (left, rootIndex - 1)
+		//root.right = balance call from right(rootIndex + 1, right)
+		//don't forget about parent
+		Node<T> [] arrayNodes = getArrayNodes();
+		root = getBalancedRoot(arrayNodes, 0, size - 1, null);
+	}
+
+	private Node<T> getBalancedRoot(Node<T>[] arrayNodes, int left, int right, Node<T> parent) {
+		Node<T> root = null;
+		if (left <= right) {
+			int indexRoot = (left + right) / 2;
+			root = arrayNodes[indexRoot];
+			root.left = getBalancedRoot(arrayNodes, left, indexRoot - 1, root);
+			root.right = getBalancedRoot(arrayNodes, indexRoot + 1, right, root);
+			root.parent = parent;
+		}
+		return root;
+	}
+
+	private Node<T>[] getArrayNodes() {
+		@SuppressWarnings("unchecked")
+		Node<T> res[] = new Node[size];
+		int index = 0;
+		Node<T> current = getLeastNodeFrom(root);
+		while(current != null) {
+			res[index++] = current;
+			current = getNextNode(current);
+		}
+		return res;
+	}
+	private Node<T> getGreaterParent(Node<T> node) {
+
+		while (node.parent != null && node.parent.left != node) {
+			node = node.parent;
+		}
+		return node.parent;
+	}
+	private Node<T> getNextNode(Node<T> current) {
+		return current.right != null ? getLeastNodeFrom(current.right) :
+			getGreaterParent(current);
+	}
+	
+	
+	
+	int result = 0;
+	public void printTree() {
 		if (root != null) {
-			inversion(root);
+			print(root, 0);
 		}
 	}
 
-	private void inversion(Node<T> root) {
-		if (root != null) {
-			inversion(root.left);
-			inversion(root.right);
-			swap(root);
+	// recursive part of printTree() function
+	private void print(Node<T> node, int depth) {
+		if (node != null) {
+			
+			print(node.right, depth + 1);
+			zigzagPath(node, true);
+			
+			
+			for (int i = 0; i < depth; i++) {
+
+				System.out.print("   ");
+			//	if(result>0) {System.out.print("|"); }
+		
+//				for (int j = result-1; j >0; j--) {
+//
+//					System.out.print("|");
+//				}
+			}
+//			
+			System.out.printf("%s%s%3d%n", PLUS, node.obj,result);
+			
+			print(node.left, depth + 1);
+			zigzagPath(node, false);
 		}
 	}
 
-	private void swap(Node<T> root) {
-		if (root != null) {
-			Node<T> tmp = root.left;
-			root.left = root.right;
-			root.right = tmp;
+	public int maxValue(int l, int r) {
+		if (l > r) {
+			return l;
+		} else {
+			return r;
 		}
 	}
+
+	// Find zigzag Path
+	public int zigzagPath(Node<T> root, boolean direction) {
+		result=0;
+		if (root == null) {
+			return -1;}
+		 else if (root.left == null && root.right == null) {
+			return 0;
+		}
+		// Recursively visit left and right subtree
+		int r = zigzagPath(root.right, false)+1;
+		int l = zigzagPath(root.left, true)+1;
+		
+		// Calculate zigzag sequence
+		result =  maxValue(l, r);
+		if (direction == true) {
+			// Take the result of right subtree
+			return r;
+		} else {
+			// Take the result of left subtree
+			return l;
+		}
+	}
+//	 Handles the request of find longest pattern of zigzag
+	public void longestZigzag()
+	{
+		if (this.root != null)
+		{
+			// We consider the sequence
+			// 1) left right left ...
+			// 2) right left right ...
+			zigzagPath(this.root, true);
+			zigzagPath(this.root, false);
+		}
+		if (result == 0)
+		{
+			System.out.print(" None \n");
+		}
+		else
+		{
+			System.out.print(" Longest zigzag : " + (result) + " \n");
+		}
+	}
+
+	
+	@Override
+	public T ceiling(T pattern) {
+		T tPattern = (T) pattern;
+		Node<T> node = getNodeOrParent(tPattern);
+		if (comp.compare(tPattern, node.obj) > 0)
+			return null;
+
+		else {
+			if (comp.compare(node.obj, tPattern) < 0) {
+				if ((comp.compare(node.left.obj, tPattern) > 0 && comp.compare(node.right.obj, tPattern) < 0))
+					return node.obj;
+			}
+		}
+		return node.obj;
+	}
+
+	@Override
+	public T floor(T pattern) {
+		T tPattern = (T) pattern;
+		Node<T> node = getNodeOrParent(tPattern);
+
+		if (comp.compare(tPattern, node.obj) < 0)
+			return null;
+
+		else {
+			if (comp.compare(node.obj, tPattern) > 0) {
+				if ((comp.compare(node.left.obj, tPattern) < 0 &&comp.compare(node.right.obj, tPattern) > 0 ))
+					return node.obj;
+			}
+		}
+		return node.obj;
+	}
+
 }
 	
