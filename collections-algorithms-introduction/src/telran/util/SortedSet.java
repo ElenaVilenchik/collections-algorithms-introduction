@@ -7,6 +7,7 @@ public interface SortedSet<T> extends Set<T> {
 	 */
 	T first();
 
+	
 	/**
 	 * 
 	 * @return reference to the most object
@@ -14,7 +15,6 @@ public interface SortedSet<T> extends Set<T> {
 	T last();
 	
 	
-	//TODO
 	/**
 	 * 
 	 * @param pattern
@@ -22,7 +22,7 @@ public interface SortedSet<T> extends Set<T> {
 	 */
 	T ceiling(T pattern);
 	
-	//TODO
+	
 	/**
 	 * 
 	 * @param pattern

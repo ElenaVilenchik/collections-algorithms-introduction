@@ -3,13 +3,16 @@ package telran.util.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import telran.util.Collection;
+import telran.util.HashSet;
 
 abstract class CollectionTests {
 	protected static final int N_NUMBERS = 1000;
@@ -21,8 +24,7 @@ abstract class CollectionTests {
 
 	protected abstract Collection<Integer> createCollection();
 
-	Integer expected[] = { 10, -5, 13, 20, 40, 15 };// {17, 20, 10, -4, 100, 12, 18, 15, 19, 48};//{ 10, -5, 13, 20, 40,
-													// 15 };
+	Integer expected[] = { 10, -5, 13, 20, 40, 15 };// {17, 20, 10, -4, 100, 12, 18, 15, 19, 48};
 	Integer largeArray[] = new Integer[N_NUMBERS];
 
 	@BeforeEach
@@ -145,7 +147,9 @@ abstract class CollectionTests {
 	}
 
 	protected void fillCollection(Integer[] array) {
-		fillCollection(largeArray);
+		for (Integer num : array) {
+			collection.add(num);
+		}
 	}
 
 	protected void wrongRemove(Iterator<Integer> it) {
@@ -162,5 +166,46 @@ abstract class CollectionTests {
 	void emptyCollectionTest() {
 		collection = createCollection();
 		assertArrayEquals(new Integer[0], collection.toArray(new Integer[0]));
+	}
+	
+	@Test
+	void cleanTest() {
+		collection.clean();
+		assertEquals(0, collection.size());
+	}
+	
+	@Test
+	void shuffleTest() {
+		int size = collection.size();
+		Integer array[] = collection.toArray(new Integer[0]);
+		Integer arraySh[] = collection.toShuffleArray(new Integer[0]);
+		assertFalse(Arrays.equals(array, arraySh));
+		collection = new HashSet<Integer>();
+		fillCollection(arraySh);
+		assertEquals(size, collection.size());
+	}
+
+	@Test
+	void streamTest() {
+
+		assertEquals(93, collection
+				.stream()
+					.mapToInt(x -> x)
+						.sum());
+		
+		assertArrayEquals(new Integer[] {-5}, collection
+				.stream()
+					.filter(n -> n < 0)
+						.toArray(size -> new Integer[size]));
+		
+//		homework
+		IntSummaryStatistics summary = collection
+				.stream()
+					.mapToInt(x -> x)
+						.summaryStatistics();
+		
+		assertEquals(-5, summary.getMin());
+		assertEquals(40, summary.getMax());
+		assertEquals(15.5, summary.getAverage());
 	}
 }

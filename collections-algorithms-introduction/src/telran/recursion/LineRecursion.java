@@ -14,24 +14,24 @@ public class LineRecursion {
 	 * @param b
 	 * @return a^b
 	 */
-	public static int pow(int a, int b) {
+	static public long pow(int a, int b) {
+		if (b < 0) {
+			throw new IllegalArgumentException(" power can't be a negative");
+		}
 		if (b == 0) {
 			return 1;
 		}
-		if (a < 0) {
-			if ((b & 1) == 1) {
-				return -addition(-a, pow(-a, b - 1));
-			} else
-				return -addition(a, pow(-a, b - 1));
-		} else
-			return addition(a, pow(a, b - 1));
+		return multiply(a, pow(a, b - 1));
 	}
 
-	private static int addition(int a, int b) {
-		if (b == 1) {
-			return a;
+	private static long multiply(int x, long y) {
+		if (y < 0) {
+			return multiply(-x, -y);
 		}
-		return a + addition(a, b - 1);
+		if (y == 0) {
+			return 0;
+		}
+		return x + multiply(x, y - 1);
 	}
 
 	/**
@@ -41,16 +41,12 @@ public class LineRecursion {
 	 */
 	public static int square(int x) {
 		if (x < 0) {
-			x = -x;
+			return square(-x);
 		}
-		return sqr(x);
-	}
-
-	private static int sqr(int x) {
-		if (x == 0) {
-			return 0;
+		if (x == 1) {
+			return 1;
 		}
-		return sqr(x - 1) + x + (x - 1);
+		return square(x - 1) + x + (x - 1);
 	}
 
 	/**

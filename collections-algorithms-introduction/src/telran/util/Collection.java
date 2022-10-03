@@ -2,9 +2,13 @@ package telran.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public interface Collection<T> extends Iterable<T> {
+
 	/**
 	 * adds object of type T in collection
 	 * 
@@ -86,5 +90,27 @@ public interface Collection<T> extends Iterable<T> {
 		// filled by null's and
 		// reference to the same array will be returned
 		return ar;
+	}
+
+	default Stream<T> stream() {
+		return StreamSupport.stream(spliterator(), false);
+	}
+
+	default void clean() {
+		removeIf(n -> true);
+	}
+
+	default T[] toShuffleArray(T[] array) {
+		 T[] arraySh = toArray(array);
+		 int index[] = { 0 };
+		 T[] arrayCopy = Arrays.copyOf(arraySh, arraySh.length);
+		// shuffling means random order of the array elements
+		new Random()
+			.ints(0, arrayCopy.length)
+				.distinct()
+					.limit(arrayCopy.length)
+						.forEach(i -> arraySh[index[0]++] = arrayCopy[i]);
+		// apply stream one code line. Hint: see SportLoto application
+		return arraySh;
 	}
 }

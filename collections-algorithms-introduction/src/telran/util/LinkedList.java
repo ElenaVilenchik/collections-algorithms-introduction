@@ -49,9 +49,7 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 				removeNode(current.prev);
 			}
 			flNext = false;
-
 		}
-
 	}
 
 	@Override
@@ -79,7 +77,6 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 			res = true;
 			Node<T> node = getNodeIndex(index);
 			removeNode(node);
-
 		}
 		return res;
 	}
@@ -93,7 +90,6 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 			removeNodeMiddle(node);
 		}
 		size--;
-
 	}
 
 	private void removeNodeMiddle(Node<T> node) {
@@ -101,13 +97,11 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		Node<T> nodeBefore = node.prev;
 		nodeBefore.next = nodeAfter;
 		nodeAfter.prev = nodeBefore;
-
 	}
 
 	private void removeTail() {
 		tail = tail.prev;
 		tail.next = null;
-
 	}
 
 	private void removeHead() {
@@ -117,14 +111,10 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 			head = head.next;
 			head.prev = null;
 		}
-
 	}
-
-	
 
 	@Override
 	public Iterator<T> iterator() {
-
 		return new LinkedListIterator();
 	}
 
@@ -156,11 +146,9 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		beforeNode.next = newNode;
 		newNode.prev = beforeNode;
 		size++;
-
 	}
 
 	private Node<T> getNodeIndex(int index) {
-
 		return index > size / 2 ? getNodeRightToLeft(index) : getNodeLeftToRight(index);
 	}
 
@@ -186,10 +174,7 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		newNode.next = head;
 		head.prev = newNode;
 		head = newNode;
-
 	}
-
-	
 
 	@Override
 	public T remove(int index) {
@@ -201,8 +186,6 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		}
 		return res;
 	}
-
-	
 
 	@Override
 	public int lastIndexOf(Object pattern) {
@@ -232,7 +215,6 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 	 * reverse - {30, -5. 10}
 	 */
 	public void reverse() {
-		
 		// no cycles allowed
 		if (head != null) {
 			reverse(head, tail);
@@ -244,7 +226,6 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 			swap(left, right);
 			reverse(left.next, right.prev);
 		}
-
 	}
 
 	private void swap(Node<T> left, Node<T> right) {
@@ -252,5 +233,4 @@ public class LinkedList<T> extends AbstractCollection<T> implements List<T> {
 		left.obj = right.obj;
 		right.obj = tmp;
 	}
-
 }

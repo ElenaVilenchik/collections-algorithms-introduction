@@ -10,9 +10,9 @@ import java.util.function.Predicate;
  *
  * @param <E> type of element
  */
-public class FilteredIterator<E> implements Iterator<E> {
-	private final Iterator<E> iterator;
-	private final Predicate<E> filter;
+public class FilteredIteratorPECS<E> implements Iterator<E> {
+	private final Iterator<? extends E> iterator;
+	private final Predicate<? super E> filter;
 
 	private E next;
 	private boolean hasNext;
@@ -24,7 +24,7 @@ public class FilteredIterator<E> implements Iterator<E> {
 	 * @param iterator the iterator to wrap
 	 * @param filter   elements must match this filter to be returned
 	 */
-	public FilteredIterator(Iterator<E> iterator, Predicate<E> filter) {
+	public FilteredIteratorPECS(Iterator<? extends E> iterator, Predicate<? super E> filter) {
 		this.iterator = iterator;
 		this.filter = filter;
 		hasNext = findNext();
